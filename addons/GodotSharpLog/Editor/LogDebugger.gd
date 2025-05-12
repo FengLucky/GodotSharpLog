@@ -11,7 +11,7 @@ func _has_capture(capture: String) -> bool:
 func _capture(message: String, data: Array, session_id: int) -> bool:
 	if message.ends_with(":message"):
 		if self.panels.has(session_id):
-			var i = 0;
+			var i := 0;
 			var panel = self.panels[session_id];
 			while i < data.size():
 				panel.add_log(data[i],data[i+1],data[i+2],data[i+3]);
@@ -19,13 +19,12 @@ func _capture(message: String, data: Array, session_id: int) -> bool:
 		return true;
 	elif message.ends_with(":category"):
 		if self.panels.has(session_id):
-			var i = 0;
+			var i := 0;
 			var panel = self.panels[session_id];
 			while i < data.size():
 				panel.add_category(data[i]);
 				i += 1;
 		return true;
-		pass	
 	return false;
 	
 func _setup_session(session_id: int) -> void:

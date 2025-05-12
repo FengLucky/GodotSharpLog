@@ -77,12 +77,7 @@ func _clear():
 func _on_log_selected(index:int):
 	self.detail.text = self.log_data_list[index].stack;	
 	
-func _on_click_code_link(json):	
-	for type in EditorInterface.get_editor_theme().get_icon_type_list():
-		print(type)
-		for icon in EditorInterface.get_editor_theme().get_icon_list("type"):
-			print(icon)
-	
+func _on_click_code_link(json):
 	var param = JSON.parse_string(json);
 	var script = load("res://"+param.path) as Script;
 	EditorInterface.edit_script(script,param.line);
