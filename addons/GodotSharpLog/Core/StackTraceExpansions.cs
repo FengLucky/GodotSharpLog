@@ -160,7 +160,7 @@ public static class StackTraceExpansions
                         if (beautiful)
                         {
                             _sb.AppendFormat(
-                                "(at [color=yellow][url={{\"path\":\"{0}]\",\"line\":{2}}}]{1}:{2}[/url][/color]",
+                                "(at [color=yellow][url={{\"path\":\"{0}\",\"line\":{2}}}]{1}:{2}[/url][/color])",
                                 relativePath, withResPath, frame.GetFileLineNumber());
                         }
                         else

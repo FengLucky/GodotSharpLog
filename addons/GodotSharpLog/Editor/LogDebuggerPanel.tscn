@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bns3ko5mwr8oo" path="res://addons/GodotSharpLog/Editor/LogDebuggerPanel.gd" id="1_1nhjf"]
 
-[node name="LogDebuggerPanel" type="Control"]
+[node name="LogDebuggerPanel" type="Control" node_paths=PackedStringArray("logs", "detail")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,3 +10,23 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_1nhjf")
+logs = NodePath("SplitContainer/LogItemList")
+detail = NodePath("SplitContainer/RichTextLabel")
+
+[node name="SplitContainer" type="VSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offset = 1000
+
+[node name="LogItemList" type="ItemList" parent="SplitContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="SplitContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+bbcode_enabled = true

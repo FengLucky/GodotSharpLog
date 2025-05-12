@@ -41,8 +41,8 @@ public partial class GLogProfiler : EngineProfiler
     public void AddMessage(LogLevel level, string message, string category,string stackTrace)
     {
         _messages.Add((int)level);
-        _messages.Add(message);
         _messages.Add(category);
+        _messages.Add(message);
         _messages.Add(stackTrace);
     }
     
@@ -67,6 +67,7 @@ public class DebuggerLogAgent:ILogAgent
             _initialized = true;
             _profiler = new();
             EngineDebugger.RegisterProfiler("gd_log", _profiler);
+            GD.Print("init ");
         }
     }
     
