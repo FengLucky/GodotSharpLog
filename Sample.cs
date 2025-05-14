@@ -8,7 +8,7 @@ public partial class Sample : Node
     public override async void _EnterTree()
     {
         base._EnterTree();
-        await Task.Delay(100);
+        await Task.Delay(10); // wait profiler start
         var fileLogAgent = new FileLogAgent();
         fileLogAgent.Cleanup(2); // cleanup log file
         GD.Print(fileLogAgent.GetCurrentLogPath());

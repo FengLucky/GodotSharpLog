@@ -4,9 +4,6 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="addons\GodotSharpLog\Editor\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="addons\GodotSharpLog\plugin.gd" />
+    <None Include="**/*.gd" />
   </ItemGroup>
 </Project>

@@ -168,20 +168,6 @@ public static class StackTraceExpansions
                             _sb.Append($"(at {withResPath}:{frame.GetFileLineNumber()})");
                         }
                     }
-                    else if (method.ReflectedType != null)
-                    {
-                        var scopeName = method.ReflectedType.Module.ScopeName;
-                        try
-                        {
-                            var metadataToken = method.MetadataToken;
-                            _sb.Append(' ');
-                            _sb.Append(CultureInfo.InvariantCulture,
-                                $"(at {scopeName}:token 0x{metadataToken:x}+0x{frame.GetILOffset():x})");
-                        }
-                        catch (InvalidOperationException ex)
-                        {
-                        }
-                    }
                 }
             }
         }
