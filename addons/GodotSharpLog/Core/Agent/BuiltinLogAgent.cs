@@ -11,6 +11,8 @@ public class BuiltinLogAgent(uint historyCount = 1000) : ILogAgent
     private readonly Queue<Variant> _histories = new();
     private readonly Array<string> _categories = new();
     private Control _panel;
+    
+    public bool PanelOpened { get; private set; }
 
     public void AddCategory(string category)
     {
@@ -58,11 +60,14 @@ public class BuiltinLogAgent(uint historyCount = 1000) : ILogAgent
                 sceneTree.Root.AddChild(_panel);
             }
         }
+
+        PanelOpened = true;
     }
 
     public void CloseLogPanel()
     {
         _panel?.QueueFree();
+        PanelOpened = false;
     }
 
     private void Log(LogLevel level, object message, string category)

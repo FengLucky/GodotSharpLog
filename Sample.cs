@@ -5,7 +5,6 @@ using GDLog;
 
 public partial class Sample : Node
 {
-    private bool _builtinLogOpen = false;
     private double _spaceInterval = 0;
     public override async void _EnterTree()
     {
@@ -49,7 +48,7 @@ public partial class Sample : Node
         if (Input.IsKeyPressed(Key.Space))
         {
             var builtinLogAgent = GLog.GetAgent<BuiltinLogAgent>();
-            if (_builtinLogOpen)
+            if (builtinLogAgent.PanelOpened)
             {
                 builtinLogAgent.CloseLogPanel();
             }
@@ -58,7 +57,6 @@ public partial class Sample : Node
                 builtinLogAgent.OpenLogPanel();
             }
             
-            _builtinLogOpen = ! _builtinLogOpen;
             _spaceInterval = 1;
         }
     }
