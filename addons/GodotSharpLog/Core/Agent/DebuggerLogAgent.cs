@@ -18,37 +18,50 @@ public partial class GLogProfiler : EngineProfiler
         Enabled = enable;
         if (!enable)
         {
-            _messages.Clear();
+            lock (_messages)
+            {
+                _messages.Clear();
+            }
         }
     }
 
     public override void _Tick(double frameTime, double processTime, double physicsTime, double physicsFrameTime)
     {
         base._Tick(frameTime, processTime, physicsTime, physicsFrameTime);
-        if (_messages.Count > 0)
-        {
-            EngineDebugger.SendMessage("gd_log:message",  _messages);
-            _messages = new();
-        }
 
-        if (_categories.Count > 0)
+        lock (_messages)
         {
-            EngineDebugger.SendMessage("gd_log:category",  _categories);
-            _categories = new();
+            if (_messages.Count > 0)
+            {
+                EngineDebugger.SendMessage("gd_log:message",  _messages);
+                _messages = new();
+            }
+
+            if (_categories.Count > 0)
+            {
+                EngineDebugger.SendMessage("gd_log:category",  _categories);
+                _categories = new();
+            }
         }
     }
 
     public void AddMessage(LogLevel level, string message, string category,string stackTrace)
     {
-        _messages.Add((int)level);
-        _messages.Add(category);
-        _messages.Add(message);
-        _messages.Add(stackTrace);
+        lock (_messages)
+        {
+            _messages.Add((int)level);
+            _messages.Add(category);
+            _messages.Add(message);
+            _messages.Add(stackTrace);
+        }
     }
     
     public void AddCategory(string category)
     {
-        _categories.Add(category);
+        lock (_messages)
+        {
+            _categories.Add(category);
+        }
     }
 }
 
@@ -67,7 +80,6 @@ public class DebuggerLogAgent:ILogAgent
             _initialized = true;
             _profiler = new();
             EngineDebugger.RegisterProfiler("gd_log", _profiler);
-            GD.Print("init ");
         }
     }
     

@@ -1,14 +1,20 @@
 @tool
 extends Control
 
-@export var logs:ItemList
-@export var detail:RichTextLabel
-@export var clear_button:Button;
-@export var info_button:Button;
-@export var warn_button:Button;
-@export var error_button:Button;	
-@export var search_edit:LineEdit;
+@export var logs :ItemList
+@export var detail :RichTextLabel
+@export var clear_button :Button;
+@export var info_button :Button;
+@export var warn_button :Button;
+@export var error_button :Button;	
+@export var search_edit :LineEdit;
 @export var search_timer :Timer;
+@export var close_button :Button;
+@export var info_icon :Texture2D;
+@export var warn_icon :Texture2D;
+@export var error_icon :Texture2D;
+@export var clear_icon :Texture2D;
+@export var search_icon :Texture2D;
 
 enum CategoryFilterType {
 	None,
@@ -22,18 +28,14 @@ class LogData:
 	var content:String;
 	var stack:String;
 	
+signal close;	
+	
 var log_data_list :Array[LogData] = [];
 var full_log_data_list :Array[LogData] = [];
 var categorys :Array[String] = [];
-var session_id:int;
-var session:EditorDebuggerSession;
+var id:int;
 var config:ConfigFile = ConfigFile.new();
-
-var info_icon := EditorInterface.get_editor_theme().get_icon("Popup","EditorIcons");
-var warn_icon := EditorInterface.get_editor_theme().get_icon("StatusWarning","EditorIcons");
-var error_icon := EditorInterface.get_editor_theme().get_icon("StatusError","EditorIcons");
-var clear_icon := EditorInterface.get_editor_theme().get_icon("Clear","EditorIcons");
-var search_icon := EditorInterface.get_editor_theme().get_icon("Search","EditorIcons");
+var is_editor := false;
 
 var log_select_index := -1;
 var log_select_time_stamp := -1;
@@ -45,30 +47,18 @@ var error_log_count := 0;
 func _ready() -> void:
 	logs.item_selected.connect(self._on_log_selected)	
 	self.detail.meta_clicked.connect(self._on_click_code_link);
+	self.close_button.pressed.connect(self._on_click_close);
 	self.info_button.toggled.connect(self._on_toggle_info);
 	self.warn_button.toggled.connect(self._on_toggle_warn);
 	self.error_button.toggled.connect(self._on_toggle_error);
-	self.clear_button.pressed.connect(self._clear);
+	self.clear_button.pressed.connect(self.clear);
 	self.search_edit.text_changed.connect(self._on_search_changed);
 	self.search_timer.timeout.connect(self._refresh);
 	
-	self.info_button.icon = info_icon;
-	self.warn_button.icon = warn_icon;
-	self.error_button.icon = error_icon;
-	self.clear_button.icon = clear_icon;
-	self.search_edit.right_icon = search_icon;
-	
+func init(id:int,is_editor:bool = false)->void:
+	self.id = id;
+	self.is_editor = is_editor;
 	self._load_config();
-
-func init(id:int,session:EditorDebuggerSession)->void:
-	self.session = session;
-	self.session_id = id;
-	self.session.toggle_profiler("gd_log",true);	
-	
-func start():
-	print("session start")
-	self._clear();
-	self.session.toggle_profiler("gd_log",true);	
 	
 func add_log(level:int,category:String,content:String,stack:String):
 	var data = LogData.new();
@@ -105,18 +95,46 @@ func add_log(level:int,category:String,content:String,stack:String):
 			if self.error_button.button_pressed:
 				self.log_data_list.push_back(data);
 				logs.add_item(content,error_icon);
+				
+func add_logs(data:Array):
+	var i := 0;
+	while i < data.size():
+		self.add_log(data[i],data[i+1],data[i+2],data[i+3]);
+		i += 4;	
 			
 func add_category(category:String):
 	pass	
+
+func add_categories(array:Array):
+	for category in array:
+		self.add_category(category);		
+	
+func clear():
+	self.logs.clear();
+	self.log_data_list.clear();
+	self.full_log_data_list.clear();
+	self.detail.text = "";
+	
+	self.info_log_count = 0;
+	self.warn_log_count = 0;
+	self.error_log_count = 0;
+	
+	self.info_button.text = "0";
+	self.warn_button.text = "0";
+	self.error_button.text = "0";	
+	
+#region for C#
+func show_close():
+	self.close_button.visible = true;		
+#endregion
 	
 func _load_config():
 	self.config.load("user://log_profiler.cfg");
-	self.info_button.button_pressed = self.config.get_value(str(self.session_id),"info_switch",true);
-	self.warn_button.button_pressed = self.config.get_value(str(self.session_id),"warn_switch",true);
-	self.error_button.button_pressed = self.config.get_value(str(self.session_id),"error_switch",true);
+	self.info_button.button_pressed = self.config.get_value(str(self.id),"info_switch",true);
+	self.warn_button.button_pressed = self.config.get_value(str(self.id),"warn_switch",true);
+	self.error_button.button_pressed = self.config.get_value(str(self.id),"error_switch",true);
 	
 func _refresh():
-	print(111)
 	var start: float = Time.get_unix_time_from_system();
 	self.log_data_list.clear();
 	
@@ -152,44 +170,29 @@ func _filter(data:LogData)->bool:
 	
 	return true;	
 	
-func _clear():
-	self.logs.clear();
-	self.log_data_list.clear();
-	self.full_log_data_list.clear();
-	self.detail.text = "";
-	
-	self.info_log_count = 0;
-	self.warn_log_count = 0;
-	self.error_log_count = 0;
-	
-	self.info_button.text = "0";
-	self.warn_button.text = "0";
-	self.error_button.text = "0";
-	
 func _on_toggle_info(open:bool):
-	self.config.set_value(str(self.session_id),"info_switch",open);
+	self.config.set_value(str(self.id),"info_switch",open);
 	self._refresh();
 	
 func _on_toggle_warn(open:bool):
-	self.config.set_value(str(self.session_id),"warn_switch",open);
+	self.config.set_value(str(self.id),"warn_switch",open);
 	self._refresh();
 	
 func _on_toggle_error(open:bool):
-	self.config.set_value(str(self.session_id),"error_switch",open);
+	self.config.set_value(str(self.id),"error_switch",open);
 	self._refresh();
 	
 func _on_search_changed(content:String):
 	self.search_timer.start(self.search_timer.wait_time);
 	
-func _on_log_selected(index:int):
+func _on_log_selected(index:int):		
 	if index != self.log_select_index:
 		self.detail.text = self.log_data_list[index].stack;	
 		self.log_select_time_stamp = Time.get_unix_time_from_system();
 		self.log_select_index = index;
-	else:
+	elif self.is_editor:
 		var time_stamp: float = Time.get_unix_time_from_system();	
-		print(time_stamp - self.log_select_time_stamp)
-		if time_stamp - self.log_select_time_stamp < 0.3:
+		if time_stamp - self.log_select_time_stamp < 1:
 			var stack: String = self.log_data_list[index].stack;
 			var regex = RegEx.new();
 			regex.compile(r'\[url=({.*})\]');
@@ -197,6 +200,10 @@ func _on_log_selected(index:int):
 			if !url.is_empty():
 				self._on_click_code_link(url);
 		self.log_select_time_stamp = Time.get_unix_time_from_system();	
+		
+func _on_click_close():
+	self.close.emit();
+	self.queue_free();		
 	
 func _on_click_code_link(json):
 	var param = JSON.parse_string(json);

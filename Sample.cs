@@ -5,6 +5,8 @@ using GDLog;
 
 public partial class Sample : Node
 {
+    private bool _builtinLogOpen = false;
+    private double _spaceInterval = 0;
     public override async void _EnterTree()
     {
         base._EnterTree();
@@ -24,10 +26,40 @@ public partial class Sample : Node
             var godotLogAgent = new GodotLogAgent();
             GLog.AddAgent(godotLogAgent);
         }
+        
+        var builtinLogAgent = new BuiltinLogAgent();
+        GLog.AddAgent(builtinLogAgent);
 
         GLog.Info("info message", "Sample");
         GLog.Warn("warn message", "Sample");
         GLog.Error("error message", "Sample");
         GLog.Exception(new Exception("exception message"), "Sample");
+    }
+
+    public override void _Process(double delta)
+    {
+        base._Process(delta);
+
+        if (_spaceInterval > 0)
+        {
+            _spaceInterval -= delta;
+            return;
+        }
+        
+        if (Input.IsKeyPressed(Key.Space))
+        {
+            var builtinLogAgent = GLog.GetAgent<BuiltinLogAgent>();
+            if (_builtinLogOpen)
+            {
+                builtinLogAgent.CloseLogPanel();
+            }
+            else
+            {
+                builtinLogAgent.OpenLogPanel();
+            }
+            
+            _builtinLogOpen = ! _builtinLogOpen;
+            _spaceInterval = 1;
+        }
     }
 }

@@ -43,6 +43,39 @@ public sealed class GLog
         }
     }
 
+    public static T GetAgent<T>() where T : class,ILogAgent
+    {
+        lock (Lock)
+        {
+            foreach (var agent in Agents)
+            {
+                if (agent.GetType().IsAssignableFrom(typeof(T)))
+                {
+                    return agent as T;
+                }
+            }
+            
+            return null;
+        }
+    }
+    
+    public static T[] GetAgents<T>() where T : class,ILogAgent
+    {
+        lock (Lock)
+        {
+            var agents = new List<T>();
+            foreach (var agent in Agents)
+            {
+                if (agent.GetType().IsSubclassOf(typeof(T)))
+                {
+                    agents.Add(agent as T);
+                }
+            }
+
+            return agents.ToArray();
+        }
+    }
+
     /// <summary>
     /// If generating the log content involves allocations (e.g. string concatenation, object creation),
     /// consider using this method to check whether the log level is enabled before actually building the message.
