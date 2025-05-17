@@ -67,6 +67,7 @@ public class BuiltinLogAgent(uint historyCount = 1000) : ILogAgent
     public void CloseLogPanel()
     {
         _panel?.QueueFree();
+        _panel = null;
         PanelOpened = false;
     }
 
@@ -92,5 +93,6 @@ public class BuiltinLogAgent(uint historyCount = 1000) : ILogAgent
     private void OnPanelClosed()
     {
         _panel = null;
+        PanelOpened = false;
     }
 }
