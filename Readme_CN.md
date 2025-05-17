@@ -1,6 +1,7 @@
 ﻿<p align="center">
   <a href="./Readme.md">English</a> | 中文<br>
 </p>
+
 # GodotSharpLog
 
 GodotSharpLog 是一个为 Godot C# 设计的日志记录工具，旨在帮助开发者更方便地管理不同场景下的日志信息。

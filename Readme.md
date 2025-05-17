@@ -1,6 +1,7 @@
 <p align="center">
   English | <a href="./Readme_CN.md">中文 </a><br>
 </p>
+
 # GodotSharpLog
 
 GodotSharpLog is a logging tool designed for Godot C#, aiming to help developers manage log information more conveniently in different scenarios.
