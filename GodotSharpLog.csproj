@@ -6,4 +6,8 @@
   <ItemGroup>
     <None Include="**/*.gd" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Readme.md" />
+    <Content Include="Readme_CN.md" />
+  </ItemGroup>
 </Project>
