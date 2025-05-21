@@ -62,6 +62,7 @@ public class BuiltinLogAgent(uint historyCount = 1000) : ILogAgent
         }
 
         PanelOpened = true;
+        res.Dispose();
     }
 
     public void CloseLogPanel()
