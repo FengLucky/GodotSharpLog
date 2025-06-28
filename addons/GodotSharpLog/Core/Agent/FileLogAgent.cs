@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -167,9 +167,9 @@ public class FileLogAgent:ILogAgent
             {
                 File.Delete(files[i].FullName);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                GD.PushError(e);
+                // ignored
             }
         }
     }
