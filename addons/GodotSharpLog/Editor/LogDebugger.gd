@@ -22,9 +22,9 @@ func _capture(message: String, data: Array, session_id: int) -> bool:
 func _setup_session(session_id: int) -> void:
 	var session: EditorDebuggerSession = get_session(session_id);	
 	var panel: LogPanel = panelRes.instantiate();
-	session.add_session_tab(panel);
 	self.panels[session_id] = panel;
-	panel.init(session_id,true);
+	panel.init(session_id,true,self._on_click_code_link);
+	session.add_session_tab(panel);
 	session.started.connect(func ():
 		panel.clear();
 		self.toggle_profiler(session,true);
@@ -38,3 +38,8 @@ func stop_all_profiler():
 		
 func toggle_profiler(session:EditorDebuggerSession,enable:bool):
 	session.toggle_profiler("gd_log",enable)
+
+func _on_click_code_link(json):
+	var param = JSON.parse_string(json);
+	var script: Script = load("res://"+param.path);
+	EditorInterface.edit_script(script,param.line);	

@@ -36,6 +36,7 @@ var categorys :Array[String] = [];
 var id:int;
 var config:ConfigFile = ConfigFile.new();
 var is_editor := false;
+var click_code_link_callback:Callable;
 
 var log_select_index := -1;
 var log_select_time_stamp := -1;
@@ -44,9 +45,14 @@ var info_log_count := 0;
 var warn_log_count := 0;
 var error_log_count := 0;
 
+func init(id:int,is_editor:bool = false,click_code_link_callback:Callable = Callable())->void:
+	self.id = id;
+	self.is_editor = is_editor;
+	self.click_code_link_callback = click_code_link_callback;
+	self._load_config();
+
 func _ready() -> void:
 	logs.item_selected.connect(self._on_log_selected)	
-	self.detail.meta_clicked.connect(self._on_click_code_link);
 	self.close_button.pressed.connect(self._on_click_close);
 	self.info_button.toggled.connect(self._on_toggle_info);
 	self.warn_button.toggled.connect(self._on_toggle_warn);
@@ -54,11 +60,8 @@ func _ready() -> void:
 	self.clear_button.pressed.connect(self.clear);
 	self.search_edit.text_changed.connect(self._on_search_changed);
 	self.search_timer.timeout.connect(self._refresh);
-	
-func init(id:int,is_editor:bool = false)->void:
-	self.id = id;
-	self.is_editor = is_editor;
-	self._load_config();
+	if self.is_editor:
+		self.detail.meta_clicked.connect(self.click_code_link_callback);
 	
 func add_log(level:int,category:String,content:String,stack:String):
 	var data = LogData.new();
@@ -198,14 +201,9 @@ func _on_log_selected(index:int):
 			regex.compile(r'\[url=({.*})\]');
 			var url = regex.search(stack).get_string(1);
 			if !url.is_empty():
-				self._on_click_code_link(url);
-		self.log_select_time_stamp = Time.get_unix_time_from_system();	
+				self.click_code_link_callback.call(url);
+		self.log_select_time_stamp = Time.get_unix_time_from_system();
 		
 func _on_click_close():
 	self.close.emit();
-	self.queue_free();		
-	
-func _on_click_code_link(json):
-	var param = JSON.parse_string(json);
-	var script: Script = load("res://"+param.path);
-	EditorInterface.edit_script(script,param.line);	
+	self.queue_free();

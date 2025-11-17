@@ -3,6 +3,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -14,7 +15,31 @@ public static class StackTraceExpansions
 {
     [ThreadStatic]
     private static StringBuilder _sb;
-    private static readonly string ApplicationPath = ProjectSettings.GlobalizePath("res://");
+
+    private static string _projectRootPath;
+    private static string ProjectRootPath
+    {
+        get
+        {
+            if (_projectRootPath == null)
+            {
+                _projectRootPath = string.Empty;
+                var stackTrack = new StackTrace(true);
+                var frame = stackTrack.GetFrame(0);
+                var fileName = frame?.GetFileName();
+                if (fileName != null)
+                {
+                    fileName = fileName.Replace(Path.DirectorySeparatorChar, '/');
+                    var index = fileName.IndexOf("addons/GodotSharpLog", StringComparison.Ordinal);
+                    if (index >= 0)
+                    {
+                        _projectRootPath = fileName.Substring(0,index);
+                    }
+                }
+            }
+            return _projectRootPath;
+        }
+    }
     
     public static string Format(this StackTrace stackTrace,bool indent = true,bool beautiful = false)
     {
@@ -34,9 +59,11 @@ public static class StackTraceExpansions
             if (frame.GetILOffset() != -1)
             {
                 var fileName = frame.GetFileName();
-                if (fileName != null && fileName.StartsWith("/root/godot/modules/mono"))
+                if (fileName != null && 
+                    (fileName.StartsWith("/root/godot/modules/mono") || 
+                     fileName.Contains(".generated.cs")))
                 {
-                    break;
+                    continue;
                 }
             }
 
@@ -154,8 +181,18 @@ public static class StackTraceExpansions
                     if (fileName != null)
                     {
                         _sb.Append(' ');
-                        var relativePath = fileName.Replace(Path.DirectorySeparatorChar, '/').Replace(ApplicationPath,"");
-                        var withResPath = "res://" + relativePath;
+                        var relativePath = fileName.Replace(Path.DirectorySeparatorChar, '/');
+                        if (ProjectRootPath != string.Empty)
+                        {
+                            relativePath = relativePath.Replace(ProjectRootPath,"");
+                        }
+                        
+                        var withResPath = relativePath;
+                        if (ProjectRootPath != string.Empty)
+                        {
+                            withResPath = "res://" + withResPath;
+                        }
+                        
                         if (beautiful)
                         {
                             _sb.AppendFormat(

@@ -67,20 +67,19 @@ public partial class GLogProfiler : EngineProfiler
 
 public class DebuggerLogAgent:ILogAgent
 {
-    private static bool _initialized;
     private static GLogProfiler _profiler;
     
-#pragma warning disable CA2255
-    [ModuleInitializer]
-#pragma warning restore CA2255
-    internal static void Init()
+    public DebuggerLogAgent()
     {
-        if (EngineDebugger.IsActive() && !_initialized)
+        if (EngineDebugger.IsActive())
         {
-            _initialized = true;
             _profiler = new();
             EngineDebugger.RegisterProfiler("gd_log", _profiler);
             EngineDebugger.ProfilerEnable("gd_log",true);
+        }
+        else
+        {
+            GD.PrintErr($"{nameof(EngineDebugger)} is inactive, register {nameof(DebuggerLogAgent)} failed.");
         }
     }
     
