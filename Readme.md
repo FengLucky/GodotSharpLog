@@ -27,11 +27,9 @@ if (EngineDebugger.IsActive())
     var debuggerLogAgent = new DebuggerLogAgent(); // Output log information to Godot's debugger panel
     GLog.AddAgent(debuggerLogAgent);
 }
-else
-{
-    var godotLogAgent = new GodotLogAgent(); // Output log information to Godot's output panel
-    GLog.AddAgent(godotLogAgent);
-}
+
+var godotLogAgent = new GodotLogAgent(); // Output log information to Godot's output panel
+GLog.AddAgent(godotLogAgent);
 
 var builtinLogAgent = new BuiltinLogAgent(); // Built-in Logging
 GLog.AddAgent(builtinLogAgent);

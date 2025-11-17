@@ -80,6 +80,7 @@ public class DebuggerLogAgent:ILogAgent
             _initialized = true;
             _profiler = new();
             EngineDebugger.RegisterProfiler("gd_log", _profiler);
+            EngineDebugger.ProfilerEnable("gd_log",true);
         }
     }
     

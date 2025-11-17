@@ -27,11 +27,9 @@ if (EngineDebugger.IsActive())
     var debuggerLogAgent = new DebuggerLogAgent(); // 将日志信息输出到 Godot 的调试器面板
     GLog.AddAgent(debuggerLogAgent);
 }
-else
-{
-    var godotLogAgent = new GodotLogAgent(); // 将日志信息输出到 Godot 的输出面板
-    GLog.AddAgent(godotLogAgent);
-}
+
+var godotLogAgent = new GodotLogAgent(); // 将日志信息输出到 Godot 的输出面板
+GLog.AddAgent(godotLogAgent);
 
 var builtinLogAgent = new BuiltinLogAgent(); // 运行时可视化界面
 GLog.AddAgent(builtinLogAgent);

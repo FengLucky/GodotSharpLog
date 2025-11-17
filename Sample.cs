@@ -6,10 +6,9 @@ using GDLog;
 public partial class Sample : Node
 {
     private double _spaceInterval = 0;
-    public override async void _EnterTree()
+    public override void _EnterTree()
     {
         base._EnterTree();
-        await Task.Delay(10); // wait profiler start
         var fileLogAgent = new FileLogAgent();
         fileLogAgent.Cleanup(2); // cleanup log file
         GD.Print(fileLogAgent.GetCurrentLogPath());
@@ -20,15 +19,13 @@ public partial class Sample : Node
             var debuggerLogAgent = new DebuggerLogAgent();
             GLog.AddAgent(debuggerLogAgent);
         }
-        else
-        {
-            var godotLogAgent = new GodotLogAgent();
-            GLog.AddAgent(godotLogAgent);
-        }
+        
+        var godotLogAgent = new GodotLogAgent();
+        GLog.AddAgent(godotLogAgent);
         
         var builtinLogAgent = new BuiltinLogAgent();
         GLog.AddAgent(builtinLogAgent);
-
+        
         GLog.Info("info message", "Sample");
         GLog.Warn("warn message", "Sample");
         GLog.Error("error message", "Sample");
