@@ -17,6 +17,7 @@
                                                     <xs:restriction base="xs:string">
                                                         <xs:enumeration value="c"/>
                                                         <xs:enumeration value="s"/>
+                                                        <xs:enumeration value="editor"/>
                                                         <xs:enumeration value="const"/>
                                                         <xs:enumeration value="comment"/>
                                                     </xs:restriction>
