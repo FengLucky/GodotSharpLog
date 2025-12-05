@@ -7,44 +7,93 @@ var dependencies_addons := [
 ];
 var luban_extend_git_url := "https://gitee.com/FengLucky/luban-extend.git";
 
-var godot_sharp_log_version := "0.1";
-var uni_task_version := "0.1"
-
 var menu: PopupMenu
+var toolbar_buttons:Array[Button] = []
+var custom_toolbar:HBoxContainer
 
 func _enter_tree() -> void:
 	menu = PopupMenu.new()
 	menu.add_item("安装依赖",0);
-	menu.add_item("打表",1);
+	menu.add_item("打表-json",1);
+	menu.add_item("打表-bin",2);
+	menu.add_item("打表-editor",3);
 
 	# 绑定点击事件
 	menu.connect("id_pressed", self._on_menu_id_pressed)
 	add_tool_submenu_item("LFFramework",menu)
 	
+	custom_toolbar = HBoxContainer.new()
+	custom_toolbar.name = "LFFrame ToolBar"
+	add_control_to_container(CONTAINER_TOOLBAR,custom_toolbar)
+	custom_toolbar.get_parent().move_child(custom_toolbar,3)
+	var space = Control.new()
+	space.custom_minimum_size = Vector2(10,0);
+	custom_toolbar.add_child(space)
+	
+	_add_toolbar_button("Json","Json打表",_build_config_json)
+	_add_toolbar_button("Bin","二进制打表",_build_config_bin)
+	_add_toolbar_button("Editor","编辑器打表",_build_config_editor)
+	
 func _exit_tree() -> void:
 	remove_tool_menu_item("LFFramework")
+	remove_control_from_container(CONTAINER_TOOLBAR,custom_toolbar)
+	for button in toolbar_buttons:
+		button.queue_free()
+	toolbar_buttons.clear()
+	custom_toolbar.queue_free()
+	
+func _add_toolbar_button(text:String,tooltip:String,pressed:Callable):
+	var button = Button.new()
+	button.text = text
+	button.tooltip_text = tooltip
+	button.pressed.connect(pressed)
+	toolbar_buttons.push_back(button)
+	custom_toolbar.add_child(button)
+	
+func _build_config_json():
+	await _build_confg("json")
+	
+func _build_config_bin():
+	await _build_confg("bin")
+	
+func _build_config_editor():
+	await _build_confg("editor")
 
+func _build_confg(type:String):
+	self._disable_all_menu_iitem_and_buttons(true)
+	var os_name := OS.get_name();
+	if os_name == "Windows":
+		print("======================= "+type+" 打表开始 =======================")
+		await self._execute_with_pipe("powershell.exe",["/c","Config/打表-"+type+".bat"],"|ERROR|")	
+		print("======================= "+type+" 打表结束 =======================")
+	elif os_name == "macOS"	or os_name == "Linux" or os_name == "BSD":
+		print("======================= "+type+" 打表开始 =======================")
+		await self._execute_with_pipe("Config/打表--"+type+".sh",[],"Error")	
+		print("======================= "+type+" 打表结束 =======================")
+	else:
+		printerr("Luban 不支持的平台:"+os_name);
+	self._disable_all_menu_iitem_and_buttons(false);
+	
 func _on_menu_id_pressed(id):
-	self._disable_all_menu_item(true);
+	self._disable_all_menu_iitem_and_buttons(true);
 	match id:
 		0:
 			await self._install_dependencies();
 		1:
-			var os_name := OS.get_name();
-			if os_name == "Windows":
-				await self._execute_with_pipe("powershell.exe",["/c","Config/打表-json.bat"],"|ERROR|")	
-				print("打表结束")
-			elif os_name == "macOS"	or os_name == "Linux" or os_name == "BSD":
-				await self._execute_with_pipe("Config/打表-json.sh",[],"Error")	
-				print("打表结束")
-			else:
-				printerr("Luban不支持的平台:"+os_name);
+			await self._build_config_json();
+		2:
+			await self._build_config_bin();
+		3:
+			await self._build_config_editor();
 			
-	self._disable_all_menu_item(false);
+	self._disable_all_menu_iitem_and_buttons(false);
 	
-func _disable_all_menu_item(disabled:bool):
+func _disable_all_menu_iitem_and_buttons(disabled:bool):
 	for i in menu.item_count:
-		menu.set_item_disabled(i,disabled);	
+		menu.set_item_disabled(i,disabled);
+	
+	for button in toolbar_buttons:
+		button.disabled = disabled
 			
 func _install_dependencies():
 	if not await self._install_luban():
