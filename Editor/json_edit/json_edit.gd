@@ -339,7 +339,7 @@ func _get_handle_files() -> Array[String]:
 func __get_handle_files(path:String,regex:RegEx, match_result:Array[String]) -> void:
 	for file in DirAccess.get_files_at(path):
 		if regex.search(file):
-			result.append(path+"/"+file)
+			match_result.append(path+"/"+file)
 			
 	for dir in DirAccess.get_directories_at(path):
 		__get_handle_files(dir,regex,match_result)
