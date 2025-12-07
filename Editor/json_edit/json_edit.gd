@@ -68,28 +68,28 @@ func _refresh() -> void:
 	_refresh_field_name("");
 	_refresh_operator(-1);
 	
-func _refresh_files(value:String) -> void:
+func _refresh_files(_value:String) -> void:
 	var files := _get_handle_files();
-	var log : String;
+	var log_str := "";
 	for file in files:
-		log += file + "\n";
+		log_str += file + "\n";
 	
 	if files.size() > 0:
-		result.text = log;
+		result.text = log_str;
 	else:
 		result.text = "没有匹配的文件"
 		
 	_files_ready = files.size() > 0;
 	_refresh_execute();
 	
-func _refresh_field_name(value:String) -> void:
+func _refresh_field_name(_value:String) -> void:
 	_field_ready = not field_name.text.strip_edges().is_empty();
 	_refresh_execute();
 	
-func _refresh_value(value:String) -> void:
+func _refresh_value(_value:String) -> void:
 	_refresh_operator(-1)
 	
-func _refresh_operator(value:int) -> void:
+func _refresh_operator(_value:int) -> void:
 	var json_type := field_type.selected == FieldType.JSON;
 	var number_type := field_type.selected == FieldType.NUMBER;
 	var none_condition := condition.selected == ConditionType.NONE;
@@ -122,8 +122,8 @@ func _refresh_operator(value:int) -> void:
 	_refresh_execute();
 
 func _refresh_execute() -> void:
-	var ready := _files_ready and _field_ready  and _operator_ready;
-	execute.disabled = not ready;
+	var execute_ready := _files_ready and _field_ready  and _operator_ready;
+	execute.disabled = not execute_ready;
 		
 func _on_path_selector_pressed() -> void:
 	file_dialog.popup_centered();
@@ -134,7 +134,7 @@ func _on_file_dialog_selected(dir) -> void:
 	
 func _on_execute_pressed() -> void:
 	var files := _get_handle_files();
-	var log:String;
+	var log_str := "";
 	var field_name_array := field_name.text.strip_edges().split(".");
 	var new_value_text := new_value.text.strip_edges();
 	var target_value_text := target_value.text.strip_edges();
@@ -160,11 +160,11 @@ func _on_execute_pressed() -> void:
 			value = new_value.text.to_float();
 		FieldType.BOOLEAN:
 			if need_condition_value:
-				var bool_value := _parse_string_to_bool(target_value_text);
-				if bool_value < 0:
+				var condition_bool_value := _parse_string_to_bool(target_value_text);
+				if condition_bool_value < 0:
 					result.text = "[color=red]目标值不是合法 bool [true,false,1,0][/color]";
 					return;
-				condition_value = bool_value > 0;
+				condition_value = condition_bool_value > 0;
 			
 			var bool_value := _parse_string_to_bool(new_value_text);
 			if bool_value < 0:
@@ -191,22 +191,22 @@ func _on_execute_pressed() -> void:
 		custom_function = Callable.create(script,methods[0]["name"])
 
 	for file in files:
-		log += file;
-		var error:String;
+		log_str += file;
+		var error := "";
 		var hadle_count := 0;
 		
 		var json_string := FileAccess.get_file_as_string(file);
 		if json_string.is_empty():
-			log += "\n[color=red]文件内容为空[/color]\n"
+			log_str += "\n[color=red]文件内容为空[/color]\n"
 			continue;
 		
-		var json := JSON.parse_string(json_string)
+		var json :Variant = JSON.parse_string(json_string);
 		if json == null:
-			log += "\n[color=red]解析失败，不是 json 格式文件[/color]\n"
+			log_str += "\n[color=red]解析失败，不是 json 格式文件[/color]\n"
 			continue;
 		
 		if json is not Array:
-			log += "\n[color=red]解析失败，不是 json 数组[/color]\n"
+			log_str += "\n[color=red]解析失败，不是 json 数组[/color]\n"
 			continue;
 		
 		for obj in json:
@@ -220,10 +220,10 @@ func _on_execute_pressed() -> void:
 		access.store_string(JSON.stringify(json,"\t"))
 		if access.get_error() != Error.OK:
 			error = "保存文件到 "+file+" 失败\n" + error; 
-		log += "\t\t\t\t\t成功处理 "+str(hadle_count)+" 个配置\n"
+		log_str += "\t\t\t\t\t成功处理 "+str(hadle_count)+" 个配置\n"
 		if not error.is_empty():
-			log += "[color=red]"+error+"[/color]\n"
-	result.text = log;
+			log_str += "[color=red]"+error+"[/color]\n"
+	result.text = log_str;
 	
 func _handle_one_record(obj:Dictionary, field_name_array:Array[String],value:Variant,condition_value:Variant,custom_function:Callable) -> String:
 	var base_field:Dictionary
@@ -296,8 +296,8 @@ func _check_field_type(obj:Variant,type:FieldType) -> bool:
 		_:
 			return false;
 	
-func _parse_string_to_bool(str:String) -> int:
-	match str.to_lower():
+func _parse_string_to_bool(str_value:String) -> int:
+	match str_value.to_lower():
 		"true":
 			return 1;
 		"false":
@@ -310,7 +310,7 @@ func _parse_string_to_bool(str:String) -> int:
 			return -1;
 	
 func _get_field_base_path(field_name_array:Array[String]) -> String:
-	var field_path: String
+	var field_path := ""
 	for j in field_name_array.size() - 1:
 		if j != 0:
 			field_path += "."
@@ -318,12 +318,12 @@ func _get_field_base_path(field_name_array:Array[String]) -> String:
 	return field_path
 	
 func _get_handle_files() -> Array[String]:
-	var result :Array[String] = [];
+	var match_result :Array[String] = [];
 	var dir := dir_path.text.strip_edges();
 	if dir.is_empty():
-		return result;
+		return match_result;
 	if not DirAccess.dir_exists_absolute(dir):
-		return result;
+		return match_result;
 	var pattern :String;
 	if wildcard.text.is_empty():
 		pattern = wildcard.placeholder_text;
@@ -333,16 +333,16 @@ func _get_handle_files() -> Array[String]:
 	var regex_str := wildcard_to_regex(pattern)
 	var regex := RegEx.new()
 	regex.compile(regex_str)
-	__get_handle_files(dir,regex,result);
-	return result
+	__get_handle_files(dir,regex,match_result);
+	return match_result
 
-func __get_handle_files(path:String,regex:RegEx, result:Array[String]) -> void:
+func __get_handle_files(path:String,regex:RegEx, match_result:Array[String]) -> void:
 	for file in DirAccess.get_files_at(path):
 		if regex.search(file):
 			result.append(path+"/"+file)
 			
 	for dir in DirAccess.get_directories_at(path):
-		__get_handle_files(dir,regex,result)
+		__get_handle_files(dir,regex,match_result)
 
 func wildcard_to_regex(pattern: String) -> String:
 	# 转义所有正则特殊字符，但保留 * 和 ? 用于后续替换
