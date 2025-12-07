@@ -11,6 +11,14 @@ var menu: PopupMenu
 var toolbar_buttons:Array[Button] = []
 var custom_toolbar:HBoxContainer
 
+const SUB_PLUGIN_FOLDER := "LFFramework/Editor/"
+
+func _enable_plugin():
+	EditorInterface.set_plugin_enabled(SUB_PLUGIN_FOLDER + "json_edit", true)
+
+func _disable_plugin():
+	EditorInterface.set_plugin_enabled(SUB_PLUGIN_FOLDER + "json_edit", false)
+
 func _enter_tree() -> void:
 	menu = PopupMenu.new()
 	menu.add_item("安装依赖",0);
@@ -26,7 +34,7 @@ func _enter_tree() -> void:
 	custom_toolbar.name = "LFFrame ToolBar"
 	add_control_to_container(CONTAINER_TOOLBAR,custom_toolbar)
 	custom_toolbar.get_parent().move_child(custom_toolbar,3)
-	var space = Control.new()
+	var space := Control.new()
 	space.custom_minimum_size = Vector2(10,0);
 	custom_toolbar.add_child(space)
 	
@@ -43,7 +51,7 @@ func _exit_tree() -> void:
 	custom_toolbar.queue_free()
 	
 func _add_toolbar_button(text:String,tooltip:String,pressed:Callable):
-	var button = Button.new()
+	var button := Button.new()
 	button.text = text
 	button.tooltip_text = tooltip
 	button.pressed.connect(pressed)
