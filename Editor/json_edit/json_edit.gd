@@ -54,7 +54,7 @@ func _ready() -> void:
 	condition.item_selected.connect(_refresh_operator);
 	target_value.text_changed.connect(_refresh_value);
 	new_value.text_changed.connect(_refresh_value);
-	function.text_changed.connect(_refresh_operator);
+	function.text_changed.connect(_refresh_function);
 	
 	path_selector.pressed.connect(_on_path_selector_pressed);
 	execute.pressed.connect(_on_execute_pressed);
@@ -87,6 +87,9 @@ func _refresh_field_name(_value:String) -> void:
 	_refresh_execute();
 	
 func _refresh_value(_value:String) -> void:
+	_refresh_operator(-1)
+
+func _refresh_function() ->void:
 	_refresh_operator(-1)
 	
 func _refresh_operator(_value:int) -> void:
@@ -146,7 +149,7 @@ func _on_execute_pressed() -> void:
 		FieldType.STRING:
 			if need_condition_value:
 				condition_value = target_value_text;
-			value = target_value_text;
+			value = new_value_text;
 		FieldType.NUMBER:
 			if need_condition_value:
 				if not target_value_text.is_valid_float():
@@ -179,7 +182,7 @@ func _on_execute_pressed() -> void:
 		_:
 			result.text = "[color=red]未实现的字段类型："+str(field_type.selected)+"[/color]";
 			return;
-			
+
 	if condition.selected == ConditionType.FUNCTION:
 		var script := GDScript.new();
 		script.source_code = "static " + function.text.strip_edges();
@@ -252,7 +255,7 @@ func _handle_one_record(obj:Dictionary, field_name_array:Array[String],value:Var
 		base_field.get_or_add(field,value)
 	else: if operator.selected == OperatorType.MODIFY:
 		if base_field.has(field):
-			base_field[field] = value;
+			base_field.set(field,value);
 	else:
 		base_field.erase(field);
 	return ""
