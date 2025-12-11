@@ -1,0 +1,37 @@
+﻿<?xml version="1.0"?>
+<module
+        xmlns="bean"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="bean ~struct.xsd"
+        name="">
+    
+    <bean name="Vector2Bean" sep="," valueType="true">
+        <var name="x" type="float"/>
+        <var name="y" type="float"/>
+        <mapper target="client" codeTarget="cs-bin,cs-dotnet-json,cs-simple-json">
+            <option name="type" value="Godot.Vector2"/>
+            <option name="constructor" value="Config.LFExternalTypeUtil.NewVector2"/>
+        </mapper>
+    </bean>
+
+    <bean name="Vector3Bean" sep="," valueType="true">
+        <var name="x" type="float"/>
+        <var name="y" type="float"/>
+        <var name="z" type="float"/>
+        <mapper target="client" codeTarget="cs-bin,cs-dotnet-json,cs-simple-json">
+            <option name="type" value="Godot.Vector3"/>
+            <option name="constructor" value="Config.LFExternalTypeUtil.NewVector3"/>
+        </mapper>
+    </bean>
+
+    <bean name="ColorBean" sep="," valueType="true">
+        <var name="r" type="int#range[0,255]"/>
+        <var name="g" type="int#range[0,255]"/>
+        <var name="b" type="int#range[0,255]"/>
+        <var name="a" type="int#range[0,255]"/>
+        <mapper target="client" codeTarget="cs-bin,cs-dotnet-json,cs-simple-json">
+            <option name="type" value="Godot.Color"/>
+            <option name="constructor" value="Config.LFExternalTypeUtil.NewColor"/>
+        </mapper>
+    </bean>
+</module>

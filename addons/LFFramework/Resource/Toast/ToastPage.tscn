@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3 uid="uid://bku8hepktwaip"]
+
+[ext_resource type="Script" uid="uid://cd1d5ig8dxwkj" path="res://addons/LFFramework/Runtime/UI/Toast/ToastPage.cs" id="1_641gm"]
+[ext_resource type="PackedScene" uid="uid://d0uybj58s023j" path="res://addons/LFFramework/Resource/Toast/ToastItem.tscn" id="2_lkhw5"]
+
+[node name="Toast" type="Control" node_paths=PackedStringArray("_items", "CloseButton")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_641gm")
+_items = [NodePath("Item1"), NodePath("Item2"), NodePath("Item3"), NodePath("Item4"), NodePath("Item5"), NodePath("Item6"), NodePath("Item7"), NodePath("Item8"), NodePath("Item9"), NodePath("Item10")]
+CloseButton = []
+
+[node name="Item1" parent="." instance=ExtResource("2_lkhw5")]
+layout_mode = 1
+
+[node name="Item2" parent="." instance=ExtResource("2_lkhw5")]
+layout_mode = 1
+
+[node name="Item3" parent="." instance=ExtResource("2_lkhw5")]
+layout_mode = 1
+
+[node name="Item4" parent="." instance=ExtResource("2_lkhw5")]
+layout_mode = 1
+
+[node name="Item5" parent="." instance=ExtResource("2_lkhw5")]
+layout_mode = 1
+
+[node name="Item6" parent="." instance=ExtResource("2_lkhw5")]
+layout_mode = 1
+
+[node name="Item7" parent="." instance=ExtResource("2_lkhw5")]
+layout_mode = 1
+
+[node name="Item8" parent="." instance=ExtResource("2_lkhw5")]
+layout_mode = 1
+
+[node name="Item9" parent="." instance=ExtResource("2_lkhw5")]
+layout_mode = 1
+
+[node name="Item10" parent="." instance=ExtResource("2_lkhw5")]
+layout_mode = 1

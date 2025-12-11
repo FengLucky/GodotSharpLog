@@ -1,0 +1,39 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="enum" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="module">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="enum" maxOccurs="unbounded" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="var" maxOccurs="unbounded" minOccurs="1">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:string">
+                                            <xs:attribute type="xs:string" name="name" use="required"/>
+                                            <xs:attribute type="xs:int" name="value" use="optional"/>
+                                            <xs:attribute type="xs:string" name="alias" use="optional"/>
+                                            <xs:attribute type="xs:string" name="comment" use="optional"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="name" use="required"/>
+                        <xs:attribute type="xs:string" name="comment" use="optional"/>
+                        <xs:attribute type="xs:boolean" name="flags" use="optional"/>
+                        <xs:attribute type="xs:boolean" name="unique" use="optional"/>
+                        <xs:attribute name="group" use="optional">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="c"/>
+                                    <xs:enumeration value="s"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
