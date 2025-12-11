@@ -10,14 +10,14 @@ config_version=5
 
 [application]
 
-config/name="GodotSharpLog"
+config/name="LFFramework"
 run/main_scene="uid://eo3qeqvdvwgi"
 config/features=PackedStringArray("4.5", "C#", "GL Compatibility")
 config/icon="uid://vyjh6mer14hw"
 
 [dotnet]
 
-project/assembly_name="GodotSharpLog"
+project/assembly_name="LFFramework"
 
 [editor_plugins]
 
