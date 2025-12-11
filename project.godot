@@ -21,7 +21,7 @@ project/assembly_name="GodotSharpLog"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/LFFramework/Editor/json_edit/plugin.cfg", "res://addons/LFFramework/plugin.cfg")
+enabled=PackedStringArray("res://addons/GodotSharpLog/plugin.cfg", "res://addons/LFFramework/Editor/json_edit/plugin.cfg", "res://addons/LFFramework/plugin.cfg", "res://addons/UniTask/plugin.cfg")
 
 [rendering]
 

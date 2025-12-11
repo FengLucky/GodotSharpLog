@@ -1,10 +1,6 @@
 @tool
 extends EditorPlugin
 
-var dependencies_addons := [
-	"https://gitee.com/FengLucky/UniTaskForGodot.git","UniTaskForGodot",
-	"https://gitee.com/FengLucky/GodotSharpLog.git","GodotSharpLog",
-];
 var luban_extend_git_url := "https://gitee.com/FengLucky/luban-extend.git";
 
 var menu: PopupMenu
@@ -21,7 +17,7 @@ func _disable_plugin():
 
 func _enter_tree() -> void:
 	menu = PopupMenu.new()
-	menu.add_item("安装依赖",0);
+	menu.add_item("安装 Luban",0);
 	menu.add_item("打表-json",1);
 	menu.add_item("打表-bin",2);
 	menu.add_item("打表-editor",3);
@@ -107,15 +103,6 @@ func _install_dependencies():
 	if not await self._install_luban():
 		printerr("依赖安装失败，请解决错误后通过 [项目]->[工具]->[LFFramework]->[安装依赖] 菜单重试")
 		return;
-	var i :int = 0;
-	while i < dependencies_addons.size():
-		var url = dependencies_addons[i];
-		var target = dependencies_addons[i+1];
-		if not await self._install_addons_from_git(url,target):
-			printerr("依赖安装失败，请解决错误后通过 [项目]->[工具]->[LFFramework]->[安装依赖] 菜单重试")
-			return;
-		i+=2;
-		
 	get_editor_interface().get_resource_filesystem().scan();	
 	print("LFFramework 依赖安装成功!");
 		
@@ -163,22 +150,6 @@ func _install_luban()->bool:
 		printerr("复制 Luban Json 文件到 Config/Define 失败")
 		return false;			
 	
-	return true;	
-		
-func _install_addons_from_git(url:String,target:String)->bool:
-	if not await self._install_or_update_git_repo(url,target):
-		return false;
-		
-	var dir := DirAccess.open("res://");	
-	var full_path := ".godot/git_cache/"+target+"/addons";	
-	for directory in dir.get_directories_at(full_path):
-		if not self._deep_delete_directory("addons/"+directory):
-			return false;
-
-	if not self._deep_copy_directory(full_path,"addons"):
-		printerr("复制插件 "+ target +" 到项目失败")
-		return false;
-		
 	return true;	
 		
 func _install_or_update_git_repo(url:String,target:String)->bool:
