@@ -1,0 +1,101 @@
+[gd_scene load_steps=6 format=3 uid="uid://d0uybj58s023j"]
+
+[ext_resource type="StyleBox" uid="uid://c4ptyh5cuxo8x" path="res://addons/LFFramework/Style/SemiTransparentBlackBg.tres" id="1_1ov7b"]
+[ext_resource type="Script" uid="uid://n2i5tbya6t4a" path="res://addons/LFFramework/Runtime/UI/Toast/ToastItem.cs" id="2_qnq7k"]
+
+[sub_resource type="Animation" id="Animation_1ov7b"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Label:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-101, -106)]
+}
+
+[sub_resource type="Animation" id="Animation_qnq7k"]
+resource_name = "fly"
+length = 2.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 2.1, 2.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1e-05, 1), Vector2(1, 1), Vector2(1, 1), Vector2(0.5, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Label:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 2.1, 2.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(14.81, 0), Vector2(-101.5, 0), Vector2(-101.5, 0), Vector2(-101, -106)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gshxl"]
+_data = {
+&"RESET": SubResource("Animation_1ov7b"),
+&"fly": SubResource("Animation_qnq7k")
+}
+
+[node name="Item" type="Control" node_paths=PackedStringArray("_animation", "_label")]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -13.0
+offset_top = 60.0
+offset_right = 13.0
+offset_bottom = 85.0
+grow_horizontal = 2
+pivot_offset = Vector2(13, 0)
+mouse_filter = 2
+script = ExtResource("2_qnq7k")
+_animation = NodePath("AnimationPlayer")
+_label = NodePath("Label")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_gshxl")
+}
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -101.0
+offset_top = -106.0
+offset_right = 102.0
+offset_bottom = -106.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = ExtResource("1_1ov7b")
+horizontal_alignment = 1
+vertical_alignment = 1

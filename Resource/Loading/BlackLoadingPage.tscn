@@ -1,0 +1,77 @@
+[gd_scene load_steps=7 format=3 uid="uid://duclea8bu7mi4"]
+
+[ext_resource type="StyleBox" uid="uid://bchf6g7uklyv1" path="res://addons/LFFramework/Style/BlackBg.tres" id="1_fof71"]
+[ext_resource type="Script" uid="uid://ygwj5mrc1b72" path="res://addons/LFFramework/Runtime/UI/Loading/LoadingPage.cs" id="2_1jks5"]
+
+[sub_resource type="Animation" id="Animation_1jks5"]
+resource_name = "enter"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 10),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_rwnv1"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_uxuo7"]
+resource_name = "exit"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_56bip"]
+_data = {
+&"RESET": SubResource("Animation_rwnv1"),
+&"enter": SubResource("Animation_1jks5"),
+&"exit": SubResource("Animation_uxuo7")
+}
+
+[node name="BlackLoadingPage" type="Panel" node_paths=PackedStringArray("CloseButton", "AnimationPlayer")]
+self_modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = ExtResource("1_fof71")
+script = ExtResource("2_1jks5")
+CloseButton = []
+AnimationPlayer = NodePath("AnimationPlayer")
+ShowAnimationName = "enter"
+CloseAnimationName = "exit"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_56bip")
+}
